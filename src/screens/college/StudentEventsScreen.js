@@ -8,6 +8,7 @@ import { AuthContext } from '../../context/AuthContext';
 import { studentEventsAPI } from '../../../apis/api';
 import AnimatedSearch from '../../components/AnimatedSearch';
 import CollapsibleFilter from '../../components/CollapsibleFilter';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // ── Date helpers ──────────────────────────────────────────────────────────────
 function toDateString(date) {
@@ -46,6 +47,7 @@ const isDatePast = (dateStr) => {
 
 export default function StudentEventsScreen({ college, studentId }) {
   const { goBack } = useContext(NavigationContext);
+  const insets = useSafeAreaInsets();
   const { darkMode, lightTheme, darkTheme } = useTheme();
   const colors = darkMode ? darkTheme : lightTheme;
 
@@ -667,7 +669,7 @@ export default function StudentEventsScreen({ college, studentId }) {
       {/* Fixed Header with Back Button + Search */}
       <View style={{
         paddingHorizontal: 20,
-        paddingTop: 32,
+        paddingTop: Math.max(insets.top, 16),
         paddingBottom: 12,
         backgroundColor: colors.cardBg,
         borderBottomWidth: 1,
@@ -705,7 +707,7 @@ export default function StudentEventsScreen({ college, studentId }) {
         />
       </View>
 
-      <ScrollView className="flex-1 px-5" contentContainerStyle={{ paddingBottom: 40, paddingTop: 20 }} showsVerticalScrollIndicator={false}>
+      <ScrollView className="flex-1 px-5" contentContainerStyle={{ paddingBottom: 40 + insets.bottom, paddingTop: 20 }} showsVerticalScrollIndicator={false}>
         {renderHeader()}
         {renderFilterSection()}
 

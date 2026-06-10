@@ -1,7 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, ScrollView, Platform as RNPlatform, ActivityIndicator, FlatList, Image, Modal } from 'react-native';
 import { FileText } from 'lucide-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AnimatedSearch from '../../components/AnimatedSearch';
+import AppHeaderWithDrawer from '../../components/AppHeaderWithDrawer';
 import * as XLSX from 'xlsx';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
@@ -46,6 +48,7 @@ const isDatePast = (dateStr) => {
 
 export default function CollegeClassesScreen({ college }) {
   const { route, navigate, goBack } = useContext(NavigationContext);
+  const insets = useSafeAreaInsets();
   const { addClass } = useContext(AttendanceContext);
   const { darkMode, lightTheme, darkTheme } = useTheme();
   const {user} = useContext(AuthContext);
@@ -1110,73 +1113,20 @@ export default function CollegeClassesScreen({ college }) {
           : "#F8F9FA",
       }}
     >
+      <AppHeaderWithDrawer
+        logoUrl={collegeData.logoUrl}
+        title={collegeData.name}
+        subtitle={collegeData.address}
+        fallbackInitial={collegeData.name?.[0] || 'C'}
+      />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ padding: 20, paddingBottom: 50 }}
+        contentContainerStyle={{
+          padding: 20,
+          paddingTop: 10,
+          paddingBottom: Math.max(insets.bottom, 50)
+        }}
       >
-        {/* --- 1. PROFESSIONAL HEADER --- */}
-        <View className="mb-4 p-4 rounded-xl border" style={{ backgroundColor: colors.cardBg, borderColor: colors.border }}>
-          <View className="flex-row items-center justify-between gap-1">
-            {/* Left: Logo + College Info */}
-            <View className="flex-row items-center flex-1 gap-3">
-              {/* Logo Box */}
-              <View
-                className="rounded-lg border overflow-hidden"
-                style={{
-                  backgroundColor: colors.iconBg,
-                  borderColor: colors.border,
-                  width: 70,
-                  height: 70,
-                  flexShrink: 0,
-                }}
-              >
-                {collegeData.logoUrl ? (
-                  <Image
-                    source={{ uri: collegeData.logoUrl }}
-                    style={{ width: '100%', height: '100%' }}
-                    resizeMode="cover"
-                  />
-                ) : (
-                  <View className="flex-1 justify-center items-center" style={{ backgroundColor: colors.accent }}>
-                    <Text className="text-white font-bold text-2xl">
-                      {collegeData.name?.[0]?.toUpperCase() || "C"}
-                    </Text>
-                  </View>
-                )}
-              </View>
-
-              {/* College Name & Address - Full width, wrapping text */}
-              <View className="flex-1">
-                <Text
-                  className="font-bold text-base leading-5"
-                  style={{ color: colors.header }}
-                >
-                  {collegeData.name?.toUpperCase()}
-                </Text>
-                <Text
-                  className="text-xs mt-1"
-                  style={{ color: colors.textSecondary }}
-                >
-                  {collegeData.address}
-                </Text>
-              </View>
-            </View>
-
-            {/* Right: Small Logout Button */}
-            <TouchableOpacity
-              className="px-3 py-1.5 rounded-full border ml-1"
-              style={{ borderColor: colors.error || "#ef4444", borderWidth: 1 }}
-              onPress={handleLogout}
-            >
-              <Text
-                className="text-xs font-bold"
-                style={{ color: colors.error || "#ef4444" }}
-              >
-                Logout
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
 
 
         {/* Event Attendance section moved to CollegeExport flow */}

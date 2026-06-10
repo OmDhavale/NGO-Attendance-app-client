@@ -13,6 +13,7 @@ import { AuthContext } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { ChevronLeft } from 'lucide-react-native';
 import * as api from '../../../apis/api';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const CLASS_PATTERN = /^\d{4}-\d{4}.{1,6}$/;
 
@@ -30,6 +31,7 @@ function getValidationHint(trimmed) {
 
 export default function AddClassScreen({ college }) {
   const { goBack } = useContext(NavigationContext);
+  const insets = useSafeAreaInsets();
   const { accessToken } = useContext(AuthContext);
   const { darkMode, lightTheme, darkTheme } = useTheme();
   const c = darkMode ? darkTheme : lightTheme;
@@ -83,7 +85,11 @@ export default function AddClassScreen({ college }) {
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: c.backgroundColors ? c.backgroundColors[0] : '#fff' }}
-      contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
+      contentContainerStyle={{ 
+        padding: 20, 
+        paddingTop: Math.max(insets.top, 20),
+        paddingBottom: Math.max(insets.bottom, 40) 
+      }}
       keyboardShouldPersistTaps="handled"
     >
       {/* ── Header ── */}

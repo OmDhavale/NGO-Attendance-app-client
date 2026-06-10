@@ -9,6 +9,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { AuthContext } from "../../context/AuthContext";
 import { college_host } from "../../../apis/api";
 import { ArrowLeft, FileSpreadsheet } from 'lucide-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // ── Date helpers ──────────────────────────────────────────────────────────────
 function toDateString(date) {
@@ -48,6 +49,7 @@ const getEventStatus = (eventObj, attendanceDateStr, checkingDate) => {
 
 export default function CollegeEventAttendanceScreen({ event, college, accessToken }) {
   const { goBack } = useContext(NavigationContext);
+  const insets = useSafeAreaInsets();
   const { darkMode, lightTheme, darkTheme } = useTheme();
   const colors = darkMode ? darkTheme : lightTheme;
   const [loading, setLoading] = useState(false);
@@ -331,9 +333,9 @@ export default function CollegeEventAttendanceScreen({ event, college, accessTok
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.backgroundColors ? colors.backgroundColors[0] : "#F8F9FA" }}>
+    <View style={{ flex: 1, backgroundColor: colors.backgroundColors ? colors.backgroundColors[0] : "#F8F9FA", paddingTop: Math.max(insets.top, 20) }}>
       {/* Header */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16, marginTop: RNPlatform.OS === 'ios' ? 60 : 40, paddingHorizontal: 20 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16, paddingHorizontal: 20 }}>
         <TouchableOpacity 
           onPress={() => goBack()} 
           style={{ 
@@ -401,7 +403,7 @@ export default function CollegeEventAttendanceScreen({ event, college, accessTok
         </View>
       )}
 
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 16 }}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 16, paddingBottom: 16 + insets.bottom }}>
         {/* Multi-day date selector (Only in detailed view) */}
         {isMultiDay && viewMode === 'detailed' && (
           <View style={{ marginBottom: 16 }}>

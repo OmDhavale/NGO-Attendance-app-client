@@ -66,78 +66,7 @@ export default function ManageBranchesScreen({ isTab = false, ngo }) {
 
   return (
     <View className="flex-1 px-5 pt-8" style={{ backgroundColor: colors.backgroundColors[0] }}>
-      {/* --- HEADER CARD --- */}
-      <View className="mb-4 p-4 rounded-xl border" style={{ backgroundColor: colors.cardBg, borderColor: colors.border }}>
-        <View className="flex-row items-center justify-between gap-1">
-          {/* Left: Logo + NGO Info */}
-          <View className="flex-row items-center flex-1 gap-3">
-            {/* Logo Box */}
-            <View
-              className="rounded-lg border overflow-hidden"
-              style={{
-                backgroundColor: colors.iconBg,
-                borderColor: colors.border,
-                width: 60,
-                height: 60,
-                flexShrink: 0,
-              }}
-            >
-              { (loggedNgo?.profileImage || loggedNgo?.ngoLogo) ? (
-                <Image
-                  source={{ uri: loggedNgo.profileImage || loggedNgo.ngoLogo }}
-                  style={{ width: '100%', height: '100%' }}
-                  resizeMode="cover"
-                />
-              ) : (
-                <View className="flex-1 justify-center items-center" style={{ backgroundColor: colors.accent }}>
-                  <Text className="text-white font-bold text-xl">
-                    {loggedNgo?.name?.[0]?.toUpperCase() || "N"}
-                  </Text>
-                </View>
-              )}
-            </View>
 
-            {/* NGO Name & Branch/Address */}
-            <View className="flex-1">
-              <Text
-                className="font-bold text-xs leading-4"
-                style={{ color: colors.textSecondary }}
-                numberOfLines={1}
-              >
-                {(loggedNgo?.ngoName || loggedNgo?.name || "NGO NAME").toUpperCase()}
-              </Text>
-              <Text
-                className="font-extrabold text-base leading-6"
-                style={{ color: colors.header }}
-                numberOfLines={1}
-              >
-                {isBranchAdmin ? loggedNgo.name : "SUPER ADMIN"}
-              </Text>
-              <Text
-                className="text-[10px] mt-0.5"
-                style={{ color: colors.textSecondary }}
-                numberOfLines={1}
-              >
-                {loggedNgo?.ngoAddress || loggedNgo?.address || "NGO Address"}
-              </Text>
-            </View>
-          </View>
-
-          {/* Right: Logout Button */}
-          <TouchableOpacity
-            className="px-3 py-1.5 rounded-full border ml-1"
-            style={{ borderColor: colors.error || "#ef4444", borderWidth: 1 }}
-            onPress={handleLogout}
-          >
-            <Text
-              className="text-xs font-bold"
-              style={{ color: colors.error || "#ef4444" }}
-            >
-              Logout
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
       {/* Header */}
       {!isTab && (
         <View className="flex-row items-center justify-between p-4 pt-10 border-b" style={{ borderColor: colors.border, backgroundColor: colors.cardBg }}>

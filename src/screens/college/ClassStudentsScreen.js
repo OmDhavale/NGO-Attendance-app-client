@@ -7,9 +7,11 @@ import { useTheme } from '../../context/ThemeContext';
 import { getAllCollegeAPI } from '../../../apis/api';
 import AnimatedSearch from '../../components/AnimatedSearch';
 import { ChevronLeft } from 'lucide-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ClassStudentsScreen({ college, className }) {
   const { navigate, goBack } = useContext(NavigationContext);
+  const insets = useSafeAreaInsets();
   const { accessToken } = useContext(AuthContext);
   const { darkMode, lightTheme, darkTheme } = useTheme();
   const colors = darkMode ? darkTheme : lightTheme;
@@ -180,7 +182,7 @@ export default function ClassStudentsScreen({ college, className }) {
       <View
         style={{
           paddingHorizontal: 20,
-          paddingTop: 40,
+          paddingTop: Math.max(insets.top, 20),
           paddingBottom: 16,
           borderBottomWidth: 1,
           backgroundColor: colors.cardBg,
@@ -250,7 +252,7 @@ export default function ClassStudentsScreen({ college, className }) {
         <FlatList
           data={[1, 2, 3, 4, 5, 6]}
           keyExtractor={(item) => item.toString()}
-          contentContainerStyle={{ paddingTop: 20, paddingBottom: 120 }}
+          contentContainerStyle={{ paddingTop: 20, paddingBottom: 120 + insets.bottom }}
           renderItem={() => (
             <View
               style={{
@@ -291,7 +293,7 @@ export default function ClassStudentsScreen({ college, className }) {
           contentContainerStyle={{
             paddingHorizontal: isGridLayout ? 20 : 0,
             paddingTop: 20,
-            paddingBottom: 120
+            paddingBottom: 120 + insets.bottom
           }}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
@@ -306,10 +308,13 @@ export default function ClassStudentsScreen({ college, className }) {
 
       {/* --- 4. FLOATING ADD BUTTON --- */}
       <View
-        className="absolute bottom-0 left-0 right-0 p-5 border-t"
+        className="absolute bottom-0 left-0 right-0 border-t"
         style={{
           backgroundColor: colors.cardBg,
           borderColor: colors.border,
+          paddingHorizontal: 20,
+          paddingTop: 20,
+          paddingBottom: Math.max(insets.bottom, 20),
         }}
       >
         <TouchableOpacity

@@ -26,6 +26,7 @@ import StudentDashboardScreen from "./StudentDashboardScreen";
 import StudentMyEventsScreen from "./StudentMyEventsScreen";
 import StudentInternshipsScreen from "./internship/StudentInternshipsScreen";
 import StudentMyInternshipsScreen from "./internship/StudentMyInternshipsScreen";
+import AppHeaderWithDrawer from "../../components/AppHeaderWithDrawer";
 
 const { width } = Dimensions.get("window");
 
@@ -67,28 +68,7 @@ export default function StudentDashboardWrapper({ student }) {
     navigate("Home");
   };
 
-  const renderHeader = () => (
-    <View style={[styles.headerCard, { backgroundColor: colors.cardBg, borderColor: colors.border, marginTop: Math.max(insets.top, 10) }]}>
-      <View style={styles.headerContent}>
-        <View style={{ flex: 1 }}>
-          <Text style={[styles.welcomeText, { color: colors.header }]}>
-            Welcome, {student?.name || "Student"}
-          </Text>
-          <Text style={[styles.prnText, { color: colors.textSecondary }]}>
-            PRN: {student?.prn || "N/A"}
-          </Text>
-        </View>
-        <TouchableOpacity
-          style={[styles.logoutButton, { borderColor: colors.error || "#ef4444" }]}
-          onPress={handleLogout}
-        >
-          <Text style={[styles.logoutText, { color: colors.error || "#ef4444" }]}>
-            Logout
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+
 
   const renderEventsTab = () => {
     return (
@@ -209,7 +189,12 @@ export default function StudentDashboardWrapper({ student }) {
   return (
     <View style={[styles.container, { backgroundColor: colors.backgroundColors ? colors.backgroundColors[0] : "#f8fafc" }]}>
       <StatusBar style={darkMode ? "light" : "dark"} />
-      {renderHeader()}
+      <AppHeaderWithDrawer
+        logoUrl={null}
+        title={`Welcome, ${student?.name || "Student"}`}
+        subtitle={`PRN: ${student?.prn || "N/A"}`}
+        fallbackInitial={student?.name?.[0] || 'S'}
+      />
       <Animated.View 
         key={activeTab}
         entering={FadeIn.duration(400)}
@@ -219,7 +204,18 @@ export default function StudentDashboardWrapper({ student }) {
       </Animated.View>
 
       {/* Bottom Navigation */}
-      <View style={[styles.bottomNav, { backgroundColor: colors.cardBg, borderTopColor: colors.border }]}>
+      <View
+        style={[
+          styles.bottomNav,
+          {
+            backgroundColor: colors.cardBg,
+            borderTopColor: colors.border,
+            height: 60 + Math.max(insets.bottom, 10),
+            paddingBottom: Math.max(insets.bottom, 10),
+            paddingTop: 10,
+          },
+        ]}
+      >
         <TouchableOpacity
           style={styles.navItem}
           onPress={() => setActiveTab("Events")}
@@ -342,9 +338,6 @@ const styles = StyleSheet.create({
   },
   bottomNav: {
     flexDirection: "row",
-    height: Platform.OS === "ios" ? 85 : 65,
-    paddingBottom: Platform.OS === "ios" ? 25 : 10,
-    paddingTop: 10,
     borderTopWidth: 1,
     elevation: 20,
     shadowColor: "#000",

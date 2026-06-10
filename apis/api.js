@@ -7,11 +7,15 @@ import { Platform } from "react-native";
 //     : "http://localhost:3000";
 //export const host = "http://172.16.30.42:3000";
 //export const host = "http://10.0.2.2:3000"; //Production
-//FOR WEB-VERSION:-
-export const host = "https://ngo-attendance-app-server.onrender.com"; //Production
+//OM BACKEND LINK:-
+//export const host = "https://ngo-attendance-app-server.onrender.com"; //Production
 
-//FOR MOBILE-VERSION:-
+//GCS BACKEND OLD:-
 //export const host = "https://ngo-attendance-backend.el.r.appspot.com"; //Production
+
+//GCS BACKEND LINK LATEST - ( ngo backend stg )
+export const host = "https:/ngo-attendance-server-946934634800.asia-south1.run.app/"
+
 
 //login auth apis
 export const auth_host = `${host}/api/v1/auth`;

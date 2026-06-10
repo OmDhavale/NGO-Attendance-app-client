@@ -9,6 +9,7 @@ import {
   Pressable,
   Platform,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { NavigationContext } from "../../context/NavigationContext";
 import { AuthContext } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
@@ -16,6 +17,7 @@ import { Calendar, Briefcase, Plus, CalendarPlus, UserPlus, X, Building } from "
 import NgoEventsScreen from "./NgoEventsScreen";
 import NgoInternshipsScreen from "./internship/NgoInternshipsScreen";
 import ManageBranchesScreen from "./ManageBranchesScreen";
+import AppHeaderWithDrawer from "../../components/AppHeaderWithDrawer";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -24,6 +26,7 @@ export default function NgoDashboard({ ngo }) {
   const { userType } = useContext(AuthContext);
   const { darkMode, lightTheme, darkTheme } = useTheme();
   const colors = darkMode ? darkTheme : lightTheme;
+  const insets = useSafeAreaInsets();
 
   // Super Admin: only Branches tab. Branch Admin / regular NGO: Events + Internships.
   const isSuperAdmin = userType === "ngo" && ngo?.is_hierarchical;
@@ -85,6 +88,12 @@ export default function NgoDashboard({ ngo }) {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.backgroundColors?.[0] || "#fff" }]}>
+      <AppHeaderWithDrawer 
+        logoUrl={ngo?.profileImage || ngo?.ngoLogo}
+        title={ngo?.ngoName || ngo?.name}
+        subtitle={isBranchAdmin ? ngo?.name : "SUPER ADMIN"}
+        fallbackInitial={ngo?.name?.[0] || 'N'}
+      />
       {/* Main Content */}
       <View style={{ flex: 1 }}>
         {renderContent()}
@@ -94,7 +103,11 @@ export default function NgoDashboard({ ngo }) {
       <TouchableOpacity
         style={[
           styles.fab,
-          { backgroundColor: colors.accent, shadowColor: colors.accent },
+          { 
+            backgroundColor: colors.accent, 
+            shadowColor: colors.accent,
+            bottom: 65 + Math.max(insets.bottom, 10),
+          },
         ]}
         onPress={openSheet}
         activeOpacity={0.8}
@@ -109,7 +122,7 @@ export default function NgoDashboard({ ngo }) {
           {
             backgroundColor: colors.cardBg,
             borderTopColor: colors.border,
-            paddingBottom: Platform.OS === 'ios' ? 25 : 10,
+            paddingBottom: Math.max(insets.bottom, 10),
           },
         ]}
       >
@@ -216,6 +229,7 @@ export default function NgoDashboard({ ngo }) {
             {
               backgroundColor: colors.cardBg,
               transform: [{ translateY: sheetAnim }],
+              paddingBottom: Math.max(insets.bottom + 15, 40),
             },
           ]}
         >

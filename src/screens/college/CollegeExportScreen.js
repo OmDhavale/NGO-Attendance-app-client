@@ -9,6 +9,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { AuthContext } from "../../context/AuthContext";
 import { college_host } from "../../../apis/api";
 import { ArrowLeft, FileText, Layers, Search, ChevronRight } from 'lucide-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // ── Date helpers ──────────────────────────────────────────────────────────────
 function toDateString(date) {
@@ -52,6 +53,7 @@ const getEventStatus = (eventObj, attendanceDateStr, checkingDate) => {
 
 export default function CollegeExportScreen({ college, eventsList = [] }) {
   const { navigate, goBack } = useContext(NavigationContext);
+  const insets = useSafeAreaInsets();
   const { darkMode, lightTheme, darkTheme } = useTheme();
   const colors = darkMode ? darkTheme : lightTheme;
   const { accessToken } = useContext(AuthContext);
@@ -456,9 +458,9 @@ export default function CollegeExportScreen({ college, eventsList = [] }) {
   }
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: colors.backgroundColors ? colors.backgroundColors[0] : "#F8F9FA" }} contentContainerStyle={{ padding: 20 }}>
+    <ScrollView style={{ flex: 1, backgroundColor: colors.backgroundColors ? colors.backgroundColors[0] : "#F8F9FA" }} contentContainerStyle={{ padding: 20, paddingTop: Math.max(insets.top, 20), paddingBottom: Math.max(insets.bottom, 20) }}>
       {/* Header */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 28, marginTop: RNPlatform.OS === 'ios' ? 60 : 40 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 28 }}>
         <TouchableOpacity 
           onPress={() => goBack()} 
           style={{ 

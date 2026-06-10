@@ -12,9 +12,11 @@ import * as api from '../../../apis/api';
 import { Buffer } from 'buffer';
 import Toast from 'react-native-toast-message';
 import { ChevronLeft } from "lucide-react-native";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function AddStudentScreen({ college, className, isNgoVolunteer, ngo }) {
   const { goBack, navigate } = useContext(NavigationContext);
+  const insets = useSafeAreaInsets();
   const { addStudent } = useContext(AttendanceContext);
   const { accessToken } = useContext(AuthContext);
   const { darkMode, lightTheme, darkTheme } = useTheme();
@@ -354,7 +356,7 @@ export default function AddStudentScreen({ college, className, isNgoVolunteer, n
   return (
     <View className="flex-1" style={{ backgroundColor: colors.backgroundColors ? colors.backgroundColors[0] : '#fff' }}>
       {/* Header with Back Button */}
-      <View className="flex-row items-center px-4 pt-12 pb-4 border-b" style={{ backgroundColor: colors.cardBg, borderBottomColor: colors.border }}>
+      <View className="flex-row items-center px-4 pb-4 border-b" style={{ backgroundColor: colors.cardBg, borderBottomColor: colors.border, paddingTop: Math.max(insets.top, 16) }}>
         <TouchableOpacity
           onPress={goBack}
           className="p-2 rounded-full mr-3 border"
@@ -374,7 +376,7 @@ export default function AddStudentScreen({ college, className, isNgoVolunteer, n
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 120 }}>
+      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 120 + insets.bottom }}>
         {/* Upload Section */}
         <View className="p-4 rounded-lg mb-4" style={{ backgroundColor: colors.cardBg, borderColor: colors.border, borderWidth: 1 }}>
           <Text className="text-base font-semibold mb-3" style={{ color: colors.textPrimary }}>Import from File</Text>
@@ -499,7 +501,7 @@ export default function AddStudentScreen({ college, className, isNgoVolunteer, n
 
       {/* Sticky Footer for Primary Action */}
       <View 
-        className="px-6 pt-4 pb-8 border-t" 
+        className="px-6 pt-4 border-t" 
         style={{ 
           backgroundColor: colors.cardBg, 
           borderTopColor: colors.border,
@@ -511,7 +513,8 @@ export default function AddStudentScreen({ college, className, isNgoVolunteer, n
           shadowOffset: { width: 0, height: -3 },
           shadowOpacity: 0.1,
           shadowRadius: 4,
-          elevation: 10
+          elevation: 10,
+          paddingBottom: Math.max(insets.bottom, 20)
         }}
       >
         <TouchableOpacity 

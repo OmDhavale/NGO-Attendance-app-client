@@ -1,7 +1,8 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useRef } from 'react';
 import {
-  View, Text, Pressable, ScrollView, useColorScheme, Image, Linking, Platform,
+  View, Text, Pressable, ScrollView, useColorScheme, Image, Linking, Platform, Modal, Dimensions, TouchableOpacity,
 } from 'react-native';
+const RNAnimated = require('react-native').Animated;
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Sun,
@@ -16,6 +17,8 @@ import {
   BadgeCheck,
   GraduationCap,
   Shield,
+  Menu,
+  X,
 } from 'lucide-react-native';
 import { NavigationContext } from '../context/NavigationContext';
 import { AuthContext } from '../context/AuthContext';
@@ -64,32 +67,32 @@ const LoginCard = ({ icon: Icon, title, subtitle, color = '#64748b', onPress, da
       onPress={disabled ? null : onPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      className="flex-1"
+      style={{ flex: 1, height: 165 }}
     >
       <Animated.View
-        className="p-6 rounded-[28px] items-center justify-center overflow-hidden"
+        className="p-5 rounded-[28px] items-center justify-center overflow-hidden"
         style={[
           animatedStyle,
           {
             backgroundColor: colors.cardBg,
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 10 },
-            shadowRadius: 24,
+            shadowRadius: 20,
             elevation: 4,
             opacity: disabled ? 0.4 : 1,
-            height: 180,
+            height: 165,
           },
         ]}
       >
         {/* Modern Icon Container */}
         <View
-          className="w-16 h-16 rounded-full items-center justify-center mb-4"
+          className="w-14 h-14 rounded-full items-center justify-center mb-3"
           style={{ backgroundColor: `${activeColor}15` }}
         >
-          <Icon color={activeColor} size={32} strokeWidth={2} />
+          <Icon color={activeColor} size={28} strokeWidth={2} />
         </View>
 
-        <Text className="text-lg font-bold text-center mb-1" style={{ color: colors.header }}>
+        <Text className="text-base font-bold text-center mb-1" style={{ color: colors.header }}>
           {title}
         </Text>
         <Text className="text-xs text-center font-medium leading-4 px-2 opacity-60" style={{ color: colors.textSecondary }}>
@@ -99,6 +102,9 @@ const LoginCard = ({ icon: Icon, title, subtitle, color = '#64748b', onPress, da
     </Pressable>
   );
 };
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const DRAWER_WIDTH = Math.min(SCREEN_WIDTH * 0.75, 300);
 
 // --- Main App Component ---
 export default function HomeScreen() {
@@ -114,54 +120,129 @@ export default function HomeScreen() {
     student: '#7c3aed', // Violet 600
   };
 
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const slideAnim = useRef(new RNAnimated.Value(0)).current;
+
+  const toggleDrawer = (toValue) => {
+    if (toValue) {
+      setIsDrawerOpen(true);
+      RNAnimated.timing(slideAnim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      RNAnimated.timing(slideAnim, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: true,
+      }).start(() => setIsDrawerOpen(false));
+    }
+  };
+
+  const handleHelpPress = () => {
+    const helpUrl = 'https://ngo-website-1-d3az.onrender.com/';
+    Linking.openURL(helpUrl).catch(err => console.error('Failed to open URL:', err));
+  };
+
+  const handleBugPress = () => {
+    if (Platform.OS === 'web') {
+      const email = 'coderzhiveai@gmail.com';
+      const subject = encodeURIComponent('Bug Report');
+      const body = encodeURIComponent('Please describe the bug you encountered:');
+      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${body}`;
+      window.open(gmailUrl, '_blank');
+    } else {
+      const bugReportEmail = 'mailto:coderzhiveai@gmail.com?subject=Bug Report&body=Please describe the bug you encountered:';
+      Linking.openURL(bugReportEmail).catch(err => console.error('Failed to open email:', err));
+    }
+  };
+
+  const translateX = slideAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [DRAWER_WIDTH, 0],
+  });
+
+  const backdropOpacity = slideAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 0.5],
+  });
+
   return (
     <LinearGradient
       colors={colors.backgroundColors}
       style={{ flex: 1 }}
     >
       <SafeAreaView style={{ flex: 1 }}>
+        {/* Top Header Row with Menu Button */}
+        <View 
+          style={{ 
+            flexDirection: 'row', 
+            justifyContent: 'flex-end', 
+            alignItems: 'center', 
+            paddingHorizontal: 20, 
+            paddingTop: 10,
+            paddingBottom: 5,
+            zIndex: 10
+          }}
+        >
+          <Pressable
+            onPress={() => toggleDrawer(true)}
+            style={({ pressed }) => [
+              {
+                backgroundColor: colors.cardBg,
+                borderColor: colors.border,
+                borderWidth: 1,
+                padding: 12,
+                borderRadius: 16,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.08,
+                shadowRadius: 8,
+                elevation: 3,
+                opacity: pressed ? 0.8 : 1,
+              }
+            ]}
+          >
+            <Menu size={22} color={colors.textPrimary} />
+          </Pressable>
+        </View>
         <ScrollView
-          contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 100 }}
+          contentContainerStyle={{
+            paddingHorizontal: 20,
+            paddingTop: 24,
+            paddingBottom: 24,
+            flexGrow: 1,
+            justifyContent: 'center',
+          }}
           showsVerticalScrollIndicator={false}
         >
-          {/* Theme Toggle - Absolute top right */}
-          <Animated.View 
-            entering={FadeInUp.duration(600).delay(100)}
-            style={{ position: 'absolute', top: 10, right: 20, zIndex: 10 }}
-          >
-            <Pressable
-              onPress={() => setTheme(!darkMode)}
-              className="p-3 rounded-full active:scale-95"
-              style={{ backgroundColor: colors.toggleBg }}
-            >
-              {darkMode ? <Sun size={20} color="#facc15" strokeWidth={2.5} /> : <Moon size={20} color="#64748b" strokeWidth={2.5} />}
-            </Pressable>
-          </Animated.View>
+
 
           {/* Header Section */}
           <Animated.View 
             entering={FadeInDown.duration(600).delay(100)}
-            className="items-center mb-12"
+            className="items-center mb-8"
           >
             <Image
               source={require('../../assets/CODER_HIVE_logo.png')}
-              style={{ width: 110, height: 110 }}
+              style={{ width: 100, height: 100 }}
               resizeMode="contain"
             />
             <View className="flex-row items-center mt-3 gap-1.5">
               <Text className="text-3xl font-black tracking-tight" style={{ color: colors.header }}>MarkIn</Text>
-              <BadgeCheck color={colors.accent} size={26} />
+              <BadgeCheck color={colors.accent} size={24} />
             </View>
-            <Text className="text-sm font-semibold mt-1.5 opacity-60" style={{ color: colors.textSecondary }}>
+            <Text className="text-xs font-semibold mt-1 opacity-60" style={{ color: colors.textSecondary }}>
               Seamlessly Mark • Track • Verify Attendance
             </Text>
           </Animated.View>
 
           {/* Role Grid Section */}
-          <View className="w-full px-1">
+          <View className="w-full px-1 mb-10">
             <Animated.Text 
               entering={FadeInDown.duration(600).delay(200)}
-              className="text-lg font-bold mb-8 text-center" 
+              className="text-base font-bold mb-4 text-center" 
               style={{ color: colors.header }}
             >
               Choose your role
@@ -214,82 +295,170 @@ export default function HomeScreen() {
           {/* Footer */}
           <Animated.View 
             entering={FadeInDown.duration(600).delay(500)}
-            className="pt-16 items-center px-4"
+            className="items-center px-4"
           >
-            <Text className="text-[10px] font-extrabold uppercase tracking-[3px] mb-4 opacity-20" style={{ color: colors.textSecondary }}>
+            <Text className="text-[10px] font-extrabold uppercase tracking-[2px] mb-2.5 opacity-20" style={{ color: colors.textSecondary }}>
               Developed by
             </Text>
             <Image
               source={darkMode ? require('../../assets/coderzhive-dark.png') : require('../../assets/coderzhive-light.png')}
-              style={{ height: 22, opacity: 0.3 }}
+              style={{ height: 20, opacity: 0.3 }}
               resizeMode="contain"
             />
           </Animated.View>
         </ScrollView>
 
-        {/* Help Button - Fixed at bottom-left */}
-        <Animated.View 
-          entering={FadeInUp.duration(600).delay(600)}
-          style={{ position: 'absolute', bottom: 25, left: 20 }}
+        {/* Drawer Overlay Modal */}
+        <Modal
+          transparent
+          visible={isDrawerOpen}
+          onRequestClose={() => toggleDrawer(false)}
+          animationType="none"
         >
-          <Pressable
-            onPress={() => {
-              const helpUrl = 'https://ngo-website-1-d3az.onrender.com/';
-              Linking.openURL(helpUrl).catch(err => console.error('Failed to open URL:', err));
-            }}
-            className="px-3 py-1.5 rounded-full flex-row items-center active:opacity-70"
-            style={{
-              backgroundColor: colors.cardBg,
-              borderColor: colors.border,
-              borderWidth: 1,
-              shadowColor: '#000',
-              shadowOpacity: 0.05,
-              shadowRadius: 4,
-              elevation: 2,
-            }}
-          >
-            <HelpCircle size={14} color={colors.textSecondary} strokeWidth={2.5} />
-            <Text className="ml-1.5 text-[11px] font-bold" style={{ color: colors.textSecondary }}>
-              Help Center
-            </Text>
-          </Pressable>
-        </Animated.View>
+          <View style={{ flex: 1 }}>
+            {/* Backdrop wrapper */}
+            <RNAnimated.View 
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: '#000',
+                opacity: backdropOpacity,
+              }}
+            >
+              <Pressable style={{ flex: 1 }} onPress={() => toggleDrawer(false)} />
+            </RNAnimated.View>
 
-        {/* Report/Mail Bugs Button - Fixed at bottom-right */}
-        <Animated.View 
-          entering={FadeInUp.duration(600).delay(600)}
-          style={{ position: 'absolute', bottom: 25, right: 20 }}
-        >
-          <Pressable
-            onPress={() => {
-              if (Platform.OS === 'web') {
-                const email = 'coderzhiveai@gmail.com';
-                const subject = encodeURIComponent('Bug Report');
-                const body = encodeURIComponent('Please describe the bug you encountered:');
-                const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${body}`;
-                window.open(gmailUrl, '_blank');
-              } else {
-                const bugReportEmail = 'mailto:coderzhiveai@gmail.com?subject=Bug Report&body=Please describe the bug you encountered:';
-                Linking.openURL(bugReportEmail).catch(err => console.error('Failed to open email:', err));
-              }
-            }}
-            className="px-3 py-1.5 rounded-full flex-row items-center active:opacity-70"
-            style={{
-              backgroundColor: colors.cardBg,
-              borderColor: colors.border,
-              borderWidth: 1,
-              shadowColor: '#000',
-              shadowOpacity: 0.05,
-              shadowRadius: 4,
-              elevation: 2,
-            }}
-          >
-            <Mail size={14} color={colors.textSecondary} strokeWidth={2.5} />
-            <Text className="ml-1.5 text-[11px] font-bold" style={{ color: colors.textSecondary }}>
-              Report Issue
-            </Text>
-          </Pressable>
-        </Animated.View>
+            {/* Sliding Drawer Body */}
+            <RNAnimated.View 
+              style={{
+                position: 'absolute',
+                right: 0,
+                top: 0,
+                bottom: 0,
+                width: DRAWER_WIDTH,
+                backgroundColor: colors.cardBg,
+                transform: [{ translateX }],
+                paddingTop: Platform.OS === 'ios' ? 60 : 30,
+                paddingBottom: 30,
+                paddingHorizontal: 20,
+                shadowColor: '#000',
+                shadowOffset: { width: -4, height: 0 },
+                shadowOpacity: 0.15,
+                shadowRadius: 10,
+                elevation: 16,
+              }}
+            >
+              {/* Drawer Header */}
+              <View 
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  paddingBottom: 16,
+                  borderBottomWidth: 1,
+                  borderBottomColor: colors.border,
+                  marginBottom: 20,
+                }}
+              >
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontSize: 20, fontWeight: '900', color: colors.header }}>MarkIn</Text>
+                  <Text style={{ fontSize: 11, fontWeight: '600', color: colors.textSecondary, marginTop: 1 }}>Settings</Text>
+                </View>
+                <Pressable 
+                  onPress={() => toggleDrawer(false)}
+                  style={{
+                    width: 38,
+                    height: 38,
+                    borderRadius: 10,
+                    backgroundColor: colors.toggleBg,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <X size={20} color={colors.textPrimary} />
+                </Pressable>
+              </View>
+
+              {/* Drawer Menu Items */}
+              <View style={{ flex: 1, gap: 12 }}>
+                {/* Appearance Mode */}
+                <TouchableOpacity 
+                  onPress={() => setTheme(!darkMode)}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: 14,
+                    borderRadius: 14,
+                    backgroundColor: colors.toggleBg,
+                  }}
+                  activeOpacity={0.7}
+                >
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    {darkMode ? (
+                      <Sun size={20} color="#facc15" strokeWidth={2.5} />
+                    ) : (
+                      <Moon size={20} color="#64748b" strokeWidth={2.5} />
+                    )}
+                    <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>
+                      {darkMode ? 'Light Theme' : 'Dark Theme'}
+                    </Text>
+                  </View>
+                  <ChevronRight size={16} color={colors.textSecondary} />
+                </TouchableOpacity>
+
+                {/* User Manual / Help Center */}
+                <TouchableOpacity 
+                  onPress={handleHelpPress}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: 14,
+                    borderRadius: 14,
+                    backgroundColor: colors.toggleBg,
+                  }}
+                  activeOpacity={0.7}
+                >
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <HelpCircle size={20} color={colors.accent} strokeWidth={2.5} />
+                    <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>
+                      User Manual / Help
+                    </Text>
+                  </View>
+                  <ChevronRight size={16} color={colors.textSecondary} />
+                </TouchableOpacity>
+
+                {/* Report Bug */}
+                <TouchableOpacity 
+                  onPress={handleBugPress}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: 14,
+                    borderRadius: 14,
+                    backgroundColor: colors.toggleBg,
+                  }}
+                  activeOpacity={0.7}
+                >
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Mail size={20} color={colors.accent} strokeWidth={2.5} />
+                    <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>
+                      Report Issue
+                    </Text>
+                  </View>
+                  <ChevronRight size={16} color={colors.textSecondary} />
+                </TouchableOpacity>
+              </View>
+            </RNAnimated.View>
+          </View>
+        </Modal>
+
+
       </SafeAreaView>
     </LinearGradient>
   );
