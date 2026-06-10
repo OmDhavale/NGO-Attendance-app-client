@@ -14,7 +14,7 @@ import { Platform } from "react-native";
 //export const host = "https://ngo-attendance-backend.el.r.appspot.com"; //Production
 
 //GCS BACKEND LINK LATEST - ( ngo backend stg )
-export const host = "https:/ngo-attendance-server-946934634800.asia-south1.run.app/"
+export const host = "https://ngo-attendance-server-946934634800.asia-south1.run.app";
 
 
 //login auth apis
