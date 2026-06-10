@@ -70,10 +70,14 @@ const LoginCard = ({ icon: Icon, title, subtitle, color = '#64748b', onPress, da
       style={{ flex: 1, height: 165 }}
     >
       <Animated.View
-        className="p-5 rounded-[28px] items-center justify-center overflow-hidden"
         style={[
           animatedStyle,
           {
+            padding: 20,
+            borderRadius: 28,
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden',
             backgroundColor: colors.cardBg,
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 10 },
@@ -86,16 +90,23 @@ const LoginCard = ({ icon: Icon, title, subtitle, color = '#64748b', onPress, da
       >
         {/* Modern Icon Container */}
         <View
-          className="w-14 h-14 rounded-full items-center justify-center mb-3"
-          style={{ backgroundColor: `${activeColor}15` }}
+          style={{ 
+            width: 56, 
+            height: 56, 
+            borderRadius: 28, 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            marginBottom: 12,
+            backgroundColor: `${activeColor}15` 
+          }}
         >
           <Icon color={activeColor} size={28} strokeWidth={2} />
         </View>
 
-        <Text className="text-base font-bold text-center mb-1" style={{ color: colors.header }}>
+        <Text style={{ fontSize: 16, fontWeight: 'bold', textAlign: 'center', marginBottom: 4, color: colors.header }}>
           {title}
         </Text>
-        <Text className="text-xs text-center font-medium leading-4 px-2 opacity-60" style={{ color: colors.textSecondary }}>
+        <Text style={{ fontSize: 12, textAlign: 'center', fontWeight: '500', lineHeight: 16, paddingHorizontal: 8, opacity: 0.6, color: colors.textSecondary }}>
           {subtitle}
         </Text>
       </Animated.View>
@@ -222,28 +233,27 @@ export default function HomeScreen() {
           {/* Header Section */}
           <Animated.View 
             entering={FadeInDown.duration(600).delay(100)}
-            className="items-center mb-8"
+            style={{ width: '100%', maxWidth: 500, alignSelf: 'center', alignItems: 'center', marginBottom: 32 }}
           >
             <Image
               source={require('../../assets/CODER_HIVE_logo.png')}
               style={{ width: 100, height: 100 }}
               resizeMode="contain"
             />
-            <View className="flex-row items-center mt-3 gap-1.5">
-              <Text className="text-3xl font-black tracking-tight" style={{ color: colors.header }}>MarkIn</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 12, gap: 6 }}>
+              <Text style={{ fontSize: 30, fontWeight: '900', letterSpacing: -0.5, color: colors.header }}>MarkIn</Text>
               <BadgeCheck color={colors.accent} size={24} />
             </View>
-            <Text className="text-xs font-semibold mt-1 opacity-60" style={{ color: colors.textSecondary }}>
+            <Text style={{ fontSize: 12, fontWeight: '600', marginTop: 4, opacity: 0.6, color: colors.textSecondary }}>
               Seamlessly Mark • Track • Verify Attendance
             </Text>
           </Animated.View>
 
           {/* Role Grid Section */}
-          <View className="w-full px-1 mb-10">
+          <View style={{ width: '100%', maxWidth: 500, alignSelf: 'center', paddingHorizontal: 4, marginBottom: 40 }}>
             <Animated.Text 
               entering={FadeInDown.duration(600).delay(200)}
-              className="text-base font-bold mb-4 text-center" 
-              style={{ color: colors.header }}
+              style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 16, textAlign: 'center', color: colors.header }}
             >
               Choose your role
             </Animated.Text>
@@ -251,7 +261,7 @@ export default function HomeScreen() {
             {/* Row 1 */}
             <Animated.View 
               entering={FadeInDown.duration(600).delay(300)}
-              className="flex-row gap-5 mb-5"
+              style={{ flexDirection: 'row', gap: 20, marginBottom: 20 }}
             >
               <LoginCard
                 icon={HeartHandshake}
@@ -276,7 +286,7 @@ export default function HomeScreen() {
             {/* Row 2 */}
             <Animated.View 
               entering={FadeInDown.duration(600).delay(400)}
-              className="flex-row justify-center"
+              style={{ flexDirection: 'row', justifyContent: 'center' }}
             >
               <View style={{ width: '48%' }}>
                 <LoginCard
@@ -295,9 +305,9 @@ export default function HomeScreen() {
           {/* Footer */}
           <Animated.View 
             entering={FadeInDown.duration(600).delay(500)}
-            className="items-center px-4"
+            style={{ width: '100%', maxWidth: 500, alignSelf: 'center', alignItems: 'center', paddingHorizontal: 16 }}
           >
-            <Text className="text-[10px] font-extrabold uppercase tracking-[2px] mb-2.5 opacity-20" style={{ color: colors.textSecondary }}>
+            <Text style={{ fontSize: 10, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 2, marginBottom: 10, opacity: 0.2, color: colors.textSecondary }}>
               Developed by
             </Text>
             <Image
