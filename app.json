@@ -13,7 +13,11 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.omdhavale15.NGOAttendanceApp",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -33,6 +37,9 @@
       "eas": {
         "projectId": "a3fda79d-272e-4b81-b6b4-7f049c3da690"
       }
-    }
+    },
+    "plugins": [
+      "expo-router"
+    ]
   }
 }
