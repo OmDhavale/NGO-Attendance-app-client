@@ -14,12 +14,14 @@ import { AuthContext } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import * as api from "../../../apis/api";
 import { User, Lock, ChevronLeft } from "lucide-react-native";
+import PrivacyPolicyCheckbox from "../../components/PrivacyPolicyCheckbox";
 
 export default function StudentLoginScreen() {
     const { darkMode, lightTheme, darkTheme } = useTheme();
     const colors = darkMode ? darkTheme : lightTheme;
     const [prn, setPrn] = useState("");
     const [password, setPassword] = useState("");
+    const [agreedToPolicy, setAgreedToPolicy] = useState(false);
     const { navigate, goBack } = useContext(NavigationContext);
     const { loginUser, switchUserType } = useContext(AuthContext);
     const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -27,6 +29,11 @@ export default function StudentLoginScreen() {
     async function onLogin() {
         if (!prn.trim() || !password.trim()) {
             alert("Please enter both PRN and password");
+            return;
+        }
+
+        if (!agreedToPolicy) {
+            alert("Please agree to the Privacy Policy to proceed.");
             return;
         }
 
@@ -145,13 +152,19 @@ export default function StudentLoginScreen() {
                                 />
                             </View>
 
+                            <PrivacyPolicyCheckbox
+                                checked={agreedToPolicy}
+                                onChange={setAgreedToPolicy}
+                                colors={colors}
+                            />
+
                             <TouchableOpacity
                                 onPress={onLogin}
                                 disabled={isLoggingIn}
                                 className="py-4 rounded-xl items-center mt-2 shadow-sm"
                                 style={{
                                     backgroundColor: colors.accent,
-                                    opacity: isLoggingIn ? 0.7 : 1
+                                    opacity: isLoggingIn || !agreedToPolicy ? 0.6 : 1
                                 }}
                             >
                                 {isLoggingIn ? (

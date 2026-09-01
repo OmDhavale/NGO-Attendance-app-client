@@ -9,11 +9,13 @@ import {
 import { NavigationContext } from "../../context/NavigationContext";
 import { AuthContext } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
-const api = require("../../../apis/api");
+import * as api from "../../../apis/api";
+import PrivacyPolicyCheckbox from "../../components/PrivacyPolicyCheckbox";
 
 export default function AdminLoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [agreedToPolicy, setAgreedToPolicy] = useState(false);
   const { navigate, goBack } = useContext(NavigationContext);
   const { loginUser, switchUserType } = useContext(AuthContext);
   const { darkMode, lightTheme, darkTheme } = useTheme();
@@ -23,6 +25,11 @@ export default function AdminLoginScreen() {
   async function onLogin() {
     if (!email || !password) {
       alert("Please enter email and password");
+      return;
+    }
+
+    if (!agreedToPolicy) {
+      alert("Please agree to the Privacy Policy to proceed.");
       return;
     }
 
@@ -112,7 +119,7 @@ export default function AdminLoginScreen() {
           placeholder="Password"
           value={password}
           onChangeText={setPassword}
-          className="p-4 rounded-2xl mb-5 border text-base"
+          className="p-4 rounded-2xl mb-3 border text-base"
           style={{
             backgroundColor: colors.iconBg,
             borderColor: colors.border,
@@ -122,14 +129,22 @@ export default function AdminLoginScreen() {
           placeholderTextColor={colors.textSecondary}
           editable={!isLoggingIn}
         />
+
+        <PrivacyPolicyCheckbox
+          checked={agreedToPolicy}
+          onChange={setAgreedToPolicy}
+          colors={colors}
+          containerStyle={{ marginBottom: 16 }}
+        />
+
         <TouchableOpacity
           className="p-4 rounded-2xl items-center"
           style={{
             backgroundColor: colors.accent,
-            opacity: isLoggingIn ? 0.6 : 1,
+            opacity: isLoggingIn || !agreedToPolicy ? 0.6 : 1,
           }}
           onPress={onLogin}
-          disabled={isLoggingIn}
+          disabled={isLoggingIn || !agreedToPolicy}
         >
           {isLoggingIn ? (
             <ActivityIndicator size="small" color="#fff" />

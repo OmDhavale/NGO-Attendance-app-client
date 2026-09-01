@@ -84,5 +84,5 @@ export const studentSubmitWorkLogAPI = (internshipId) =>
     `${student_host}/internships/${internshipId}/work-log`;
 export const studentWorkLogsAPI = (internshipId) =>
     `${student_host}/internships/${internshipId}/work-logs`;
-// ─────────────────────────────────────────────────────────────────────────────
-
+// Privacy Policy URL
+export const privacyPolicyURL = "https://ngo-website-1-d3az.onrender.com/privacy-policy";

@@ -22,6 +22,7 @@ import {
   RotateCcw
 } from "lucide-react-native";
 import * as api from "../../../apis/api";
+import PrivacyPolicyCheckbox from "../../components/PrivacyPolicyCheckbox";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -108,6 +109,7 @@ export default function NgoLoginScreen() {
   const [loadingNgos, setLoadingNgos] = useState(true);
   const [loadingBranches, setLoadingBranches] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [agreedToPolicy, setAgreedToPolicy] = useState(false);
 
   // NGO Section Search
   const [ngoSearch, setNgoSearch] = useState("");
@@ -200,6 +202,10 @@ export default function NgoLoginScreen() {
 
   async function onLogin() {
     if (!selectedNgo) return;
+    if (!agreedToPolicy) {
+      alert("Please agree to the Privacy Policy to proceed.");
+      return;
+    }
     setIsLoggingIn(true);
     try {
       await switchUserType(loginUserType);
@@ -388,17 +394,24 @@ export default function NgoLoginScreen() {
                   </View>
                 </View>
 
-                <View style={{ marginBottom: 24 }}>
+                <View style={{ marginBottom: 16 }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', padding: 16, borderRadius: 16, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.iconBg }}>
                     <Lock size={18} color={colors.textSecondary} style={{ marginRight: 12 }} />
                     <TextInput placeholder="Enter Password" value={password} onChangeText={setPassword} secureTextEntry style={{ flex: 1, color: colors.textPrimary, fontSize: 16 }} placeholderTextColor={colors.textSecondary} />
                   </View>
                 </View>
 
+                <PrivacyPolicyCheckbox
+                  checked={agreedToPolicy}
+                  onChange={setAgreedToPolicy}
+                  colors={colors}
+                  containerStyle={{ marginBottom: 20 }}
+                />
+
                 <TouchableOpacity
                   onPress={onLogin}
-                  disabled={isLoggingIn || !password}
-                  style={{ backgroundColor: colors.accent, padding: 20, borderRadius: 16, alignItems: 'center', opacity: (isLoggingIn || !password) ? 0.6 : 1, shadowColor: colors.accent, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.2, shadowRadius: 10, elevation: 6 }}
+                  disabled={isLoggingIn || !password || !agreedToPolicy}
+                  style={{ backgroundColor: colors.accent, padding: 20, borderRadius: 16, alignItems: 'center', opacity: (isLoggingIn || !password || !agreedToPolicy) ? 0.6 : 1, shadowColor: colors.accent, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.2, shadowRadius: 10, elevation: 6 }}
                 >
                   {isLoggingIn ? <ActivityIndicator color="white" /> : <Text style={{ color: 'white', fontWeight: '900', fontSize: 17, letterSpacing: 0.5 }}>Secure Login</Text>}
                 </TouchableOpacity>

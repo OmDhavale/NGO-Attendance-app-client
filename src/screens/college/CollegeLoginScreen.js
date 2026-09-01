@@ -15,12 +15,14 @@ import { AuthContext } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import * as api from "../../../apis/api";
 import { Search, Mail, Lock, School, Check, ChevronLeft } from "lucide-react-native";
+import PrivacyPolicyCheckbox from "../../components/PrivacyPolicyCheckbox";
 
 export default function CollegeLoginScreen() {
   const { darkMode, lightTheme, darkTheme } = useTheme();
   const colors = darkMode ? darkTheme : lightTheme;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [agreedToPolicy, setAgreedToPolicy] = useState(false);
   const { navigate, goBack } = useContext(NavigationContext);
   const { loginUser, switchUserType } = useContext(AuthContext);
   const [collegesList, setCollegesList] = useState([]);
@@ -60,6 +62,10 @@ export default function CollegeLoginScreen() {
 
   async function onLogin() {
     if (!selectedCollege) return;
+    if (!agreedToPolicy) {
+      alert("Please agree to the Privacy Policy to proceed.");
+      return;
+    }
 
     setIsLoggingIn(true);
     const reqBody = { email: email, password: password, userType: "college" };
@@ -256,13 +262,19 @@ export default function CollegeLoginScreen() {
                     />
                   </View>
 
+                  <PrivacyPolicyCheckbox
+                    checked={agreedToPolicy}
+                    onChange={setAgreedToPolicy}
+                    colors={colors}
+                  />
+
                   <TouchableOpacity
                     onPress={onLogin}
-                    disabled={isLoggingIn}
+                    disabled={isLoggingIn || !agreedToPolicy}
                     className="py-4 rounded-xl items-center mt-2 shadow-sm"
                     style={{
                       backgroundColor: colors.accent,
-                      opacity: isLoggingIn ? 0.7 : 1
+                      opacity: isLoggingIn || !agreedToPolicy ? 0.6 : 1
                     }}
                   >
                     {isLoggingIn ? (
